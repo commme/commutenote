@@ -1,0 +1,459 @@
+/* =========================================================
+   today-office — 페이지별 스타일 (line-select / entry / profile)
+   train.css 의 컬러 토큰을 그대로 사용
+   ========================================================= */
+
+/* =========================================================
+   노선 선택 화면 — 글귀는 그대로, 카드는 TDS ListRow 사용
+   ========================================================= */
+.line-select {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 50% -20%, var(--to-soft) 0%, #ffffff 60%) no-repeat,
+    #ffffff;
+  /* iOS notch 회피 — hero 텍스트가 카메라 컷아웃에 가려지지 않도록 */
+  padding: calc(56px + env(safe-area-inset-top)) 0 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.line-select__hero {
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 0 20px;
+}
+
+.line-select__brand {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--to-text-secondary);
+  margin-bottom: 6px;
+}
+
+.line-select__lead {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--to-text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.line-select__sub {
+  font-size: 14px;
+  color: var(--to-text-secondary);
+  margin-top: 6px;
+}
+
+.line-select__list-wrap {
+  flex: 1;
+  padding: 0 4px;
+}
+
+.line-select__hint {
+  text-align: center;
+  font-size: 11px;
+  color: var(--to-text-tertiary);
+  margin-top: 14px;
+}
+
+/* =========================================================
+   진입(도어) 화면
+   ========================================================= */
+.entry {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 70%, rgba(255, 255, 255, 0.12) 0%, transparent 60%),
+    linear-gradient(180deg, #08152c 0%, var(--line-color, #3182f6) 100%);
+  overflow: hidden;
+  z-index: 100;
+}
+
+.entry__inside {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #0c1a33 0%, #1b3158 60%, #0c1a33 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.entry__inside-glow {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 233, 168, 0.4) 0%, transparent 60%);
+  filter: blur(20px);
+}
+
+.entry__inside-text {
+  position: relative;
+  text-align: center;
+  color: #fff;
+}
+
+.entry__inside-headline {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.entry__inside-sub {
+  font-size: 13px;
+  color: #c5d4ee;
+  margin-top: 6px;
+}
+
+.entry__door {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: linear-gradient(180deg, #d4dde8 0%, #aab6c8 50%, #d4dde8 100%);
+  box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.15);
+  transition: transform 1.2s cubic-bezier(0.7, 0, 0.18, 1);
+  z-index: 1;
+}
+
+.entry__door--left {
+  left: 0;
+  border-right: 2px solid var(--line-color, #3182f6);
+}
+
+.entry__door--right {
+  right: 0;
+  border-left: 2px solid var(--line-color, #3182f6);
+}
+
+.entry[data-stage="opening"] .entry__door--left,
+.entry[data-stage="boarding"] .entry__door--left {
+  transform: translateX(-100%);
+}
+
+.entry[data-stage="opening"] .entry__door--right,
+.entry[data-stage="boarding"] .entry__door--right {
+  transform: translateX(100%);
+}
+
+.entry__door-line {
+  position: absolute;
+  top: 30%;
+  left: 8%;
+  right: 8%;
+  height: 4px;
+  background: var(--line-color, #3182f6);
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+.entry__door-window {
+  position: absolute;
+  top: 38%;
+  left: 12%;
+  right: 12%;
+  height: 30%;
+  background: linear-gradient(180deg, rgba(8, 21, 44, 0.85), rgba(31, 56, 99, 0.85));
+  border-radius: 4px;
+  border: 2px solid rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.entry__door-handle {
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 70px;
+  background: #707d92;
+  border-radius: 3px;
+  transform: translateY(-50%);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.entry__door--left .entry__door-handle { right: 12px; }
+.entry__door--right .entry__door-handle { left: 12px; }
+
+.entry__caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12vh;
+  text-align: center;
+  color: #fff;
+  z-index: 2;
+  pointer-events: none;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  animation: caption-pop 600ms ease;
+}
+
+.entry__caption-line {
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0.85;
+  margin-bottom: 4px;
+}
+
+.entry__caption-title {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.entry__caption-sub {
+  font-size: 14px;
+  margin-top: 8px;
+  opacity: 0.85;
+}
+
+@keyframes caption-pop {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =========================================================
+   프로필 화면 — 헤더는 커스텀, 탭은 TDS Tab, 옵션은 커스텀 그리드
+   ========================================================= */
+.profile {
+  min-height: 100vh;
+  background: var(--to-bg);
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+}
+
+.profile__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* iOS notch 회피 */
+  padding: calc(14px + env(safe-area-inset-top)) 12px 14px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--to-divider);
+}
+
+.profile__back {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 0;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.profile__back:active {
+  background: var(--to-grey-100);
+}
+
+.profile__title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--to-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.profile__spacer {
+  width: 36px;
+}
+
+.profile__stage {
+  position: relative;
+  padding: 28px 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
+
+.profile__stage-bg {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(49, 130, 246, 0.08) 0%, transparent 70%);
+}
+
+.profile__avatar-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.profile__nick {
+  background: #ffffff;
+  padding: 12px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-bottom: 1px solid var(--to-divider);
+}
+
+.profile__nick-label {
+  font-size: 12px;
+  color: var(--to-text-secondary);
+  font-weight: 600;
+}
+
+.profile__nick-input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1.5px solid var(--to-divider);
+  background: transparent;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--to-text-primary);
+  padding: 6px 0;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.profile__nick-input:focus {
+  border-bottom-color: var(--to-primary);
+}
+
+.profile__line-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: #ffffff;
+  border: 0;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  border-bottom: 1px solid var(--to-divider);
+}
+
+.profile__line-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile__line-info {
+  flex: 1;
+}
+
+.profile__line-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--to-text-primary);
+}
+
+.profile__line-desc {
+  font-size: 12px;
+  color: var(--to-text-secondary);
+  margin-top: 2px;
+}
+
+/* TDS Tab 을 감싸는 컨테이너 (배경/패딩 제공) */
+.profile__tabs {
+  background: var(--to-bg);
+  padding: 8px 0 4px;
+}
+
+.profile__options {
+  flex: 1;
+  padding: 12px 16px 16px;
+}
+
+.opt-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.opt-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px 8px;
+  background: #ffffff;
+  border: 2px solid transparent;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.opt-card:hover {
+  background: var(--to-grey-50);
+}
+
+.opt-card.is-selected {
+  border-color: var(--to-primary);
+  background: var(--to-soft);
+}
+
+.opt-card__preview {
+  width: 64px;
+  height: 80px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.opt-card__label {
+  font-size: 11px;
+  color: var(--to-text-primary);
+  font-weight: 600;
+}
+
+.opt-section-label {
+  font-size: 12px;
+  color: var(--to-text-secondary);
+  font-weight: 600;
+  margin: 18px 4px 8px;
+}
+
+.opt-swatches {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.opt-swatches--big {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.opt-swatch {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.15);
+  transition: transform 0.12s ease, border-color 0.15s ease;
+}
+
+.opt-swatch:active {
+  transform: scale(0.92);
+}
+
+.opt-swatch.is-selected {
+  border-color: var(--to-primary);
+  box-shadow:
+    0 0 0 2px #ffffff,
+    inset 0 -2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.opt-swatch--big {
+  border-radius: 14px;
+}
+
+.profile__cta {
+  padding: 12px 20px 0;
+  background: var(--to-bg);
+}
