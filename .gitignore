@@ -45,3 +45,6 @@ desktop.ini
 # AI 도구 메모리 (선택)
 .cursor/
 .windsurf/
+
+# AIT 빌드 산출물 (ait build 가 매번 생성)
+*.ait
