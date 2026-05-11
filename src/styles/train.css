@@ -177,10 +177,35 @@
   width: 100%;
   height: 420px;
   overflow: hidden;
-  background: var(--to-train-wall);
+  /* GPT 3D 자산 배경 톤과 잘 맞는 부드러운 sky 그라디언트 (이미지 못 불러올 때 fallback) */
+  background: linear-gradient(180deg, #cfe6ff 0%, #eaf3ff 100%);
   z-index: 1;
   flex: 1;
   min-height: 380px;
+}
+
+/* 3D 자산 배경 이미지 — 좌석/창문/조명 다 포함 */
+.train__bg-img {
+  position: absolute;
+  inset: 0;
+  background-image: url(/assets/backgrounds/subway-room-main-bright-3d.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center top;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 노선 컬러 액센트 — 배경 위 천장 라이트 라인 */
+.train__line-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  z-index: 1;
+  opacity: 0.85;
+  pointer-events: none;
 }
 
 .train__sway {
@@ -379,6 +404,7 @@
 .train__slots {
   position: absolute;
   inset: 0;
+  z-index: 2; /* 배경 이미지 위에 캐릭터 */
 }
 
 /* =========================================================
@@ -513,15 +539,16 @@
   position: relative;
   background: #ffffff;
   color: var(--to-text-primary);
-  border-radius: 14px;
-  padding: 8px 12px 10px;
-  min-width: 92px;
-  max-width: 168px;
+  border-radius: 18px;
+  padding: 10px 14px 12px;
+  min-width: 100px;
+  max-width: 220px;
   box-shadow:
     0 6px 14px rgba(0, 0, 0, 0.18),
     0 1px 0 rgba(255, 255, 255, 0.4) inset;
-  font-size: 13px;
-  line-height: 1.32;
+  font-size: 15px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
   word-break: keep-all;
   text-align: center;
 }
@@ -533,15 +560,15 @@
 }
 
 .bubble__nick {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--to-text-secondary);
-  margin-bottom: 2px;
-  letter-spacing: 0.01em;
+  margin-bottom: 3px;
+  letter-spacing: -0.01em;
 }
 
 .bubble__body {
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .bubble__tail {

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>today-office — 픽셀 적용 범위 3종 비교</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px;
+    font-family: -apple-system, "SF Pro Display", "Pretendard", sans-serif;
+    background: #f0f1f3;
+    color: #111;
+  }
+  h1 {
+    font-size: 22px;
+    margin: 0 0 6px;
+    text-align: center;
+  }
+  .sub {
+    text-align: center;
+    color: #777;
+    font-size: 13px;
+    margin-bottom: 28px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  .card__label {
+    padding: 14px 18px 10px;
+    border-bottom: 1px solid #eee;
+  }
+  .card__title { font-size: 17px; font-weight: 700; margin: 0; }
+  .card__desc { font-size: 12px; color: #888; margin: 4px 0 0; }
+
+  /* phone shell */
+  .phone {
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ===================================================
+     [공통] 캐릭터 베이스
+     =================================================== */
+  .pax-modern {
+    width: 32px; height: 50px;
+    border-radius: 16px 16px 10px 10px;
+    background: #f4d2b7;
+    position: relative;
+  }
+  .pax-modern::before {
+    content: "";
+    position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: inherit;
+  }
+  .pax-pixel {
+    width: 32px; height: 50px;
+    background: #ff6b3d;
+    border: 3px solid #1a1108;
+    image-rendering: pixelated;
+    position: relative;
+  }
+  .pax-pixel::before {
+    content: "";
+    position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+    width: 24px; height: 24px;
+    background: #f4a07a;
+    border: 3px solid #1a1108;
+    image-rendering: pixelated;
+  }
+
+  /* ===================================================
+     OPT 1. 풀 픽셀
+     =================================================== */
+  .opt1 .phone { background: #1a252f; }
+  .opt1 .header {
+    background: #2c3e50;
+    border-bottom: 4px solid #1a1108;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #ecf0f1;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    line-height: 1.4;
+  }
+  .opt1 .badge {
+    width: 24px; height: 24px;
+    background: #f39c12;
+    border: 3px solid #1a1108;
+    image-rendering: pixelated;
+  }
+  .opt1 .scene {
+    flex: 1;
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 70%, #1a252f 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .opt1 .windows {
+    position: absolute; top: 16px; left: 12px; right: 12px;
+    height: 80px;
+    display: flex; gap: 6px;
+  }
+  .opt1 .windows > div {
+    flex: 1;
+    background: linear-gradient(180deg, #6bb6e8 0%, #6bb6e8 50%, #2c3e50 50%, #2c3e50 100%);
+    border: 3px solid #1a1108;
+    image-rendering: pixelated;
+  }
+  .opt1 .seat {
+    position: absolute; bottom: 50px; left: 0; right: 0;
+    height: 50px;
+    background: repeating-linear-gradient(0deg, #4a3623 0px, #4a3623 4px, #5e4530 4px, #5e4530 8px);
+    border-top: 4px solid #1a1108;
+  }
+  .opt1 .pax-pixel { position: absolute; bottom: 70px; }
+  .opt1 .pax-1 { left: 18%; }
+  .opt1 .pax-2 { left: 45%; background: #f1c40f; }
+  .opt1 .pax-3 { left: 72%; background: #27ae60; }
+  .opt1 .bubble {
+    position: absolute; top: 110px; left: 50%; transform: translateX(-50%);
+    background: #ecf0f1; color: #1a1108;
+    font-family: 'VT323', monospace;
+    font-size: 16px; font-weight: 700;
+    padding: 4px 8px;
+    border: 3px solid #1a1108;
+    image-rendering: pixelated;
+  }
+  .opt1 .input-bar {
+    background: #2c3e50;
+    border-top: 4px solid #1a1108;
+    padding: 10px;
+    display: flex; gap: 6px;
+  }
+  .opt1 .input {
+    flex: 1; background: #ecf0f1;
+    border: 3px solid #1a1108;
+    padding: 6px 8px;
+    color: #1a1108;
+    font-family: 'VT323', monospace;
+    font-size: 14px;
+  }
+  .opt1 .send-btn {
+    background: #f39c12;
+    border: 3px solid #1a1108;
+    padding: 6px 10px;
+    color: #1a1108;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+  }
+
+  /* ===================================================
+     OPT 2. 하이브리드 — UI 모던, 씬만 픽셀
+     =================================================== */
+  .opt2 .phone { background: #f5f8fc; }
+  .opt2 .header {
+    background: rgba(255,255,255,0.95);
+    border-bottom: 1px solid #e5eaf0;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #111;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .opt2 .badge {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #3182f6, #5a9eff);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  }
+  .opt2 .scene {
+    flex: 1;
+    background: linear-gradient(180deg, #2c3e50 0%, #1a252f 100%);
+    position: relative;
+    overflow: hidden;
+    image-rendering: pixelated;
+  }
+  .opt2 .windows {
+    position: absolute; top: 16px; left: 12px; right: 12px;
+    height: 80px;
+    display: flex; gap: 6px;
+  }
+  .opt2 .windows > div {
+    flex: 1;
+    background: linear-gradient(180deg, #6bb6e8 0%, #6bb6e8 50%, #2c3e50 50%, #2c3e50 100%);
+    border: 3px solid #1a1108;
+  }
+  .opt2 .seat {
+    position: absolute; bottom: 50px; left: 0; right: 0;
+    height: 50px;
+    background: repeating-linear-gradient(0deg, #4a3623 0px, #4a3623 4px, #5e4530 4px, #5e4530 8px);
+    border-top: 4px solid #1a1108;
+  }
+  .opt2 .pax-pixel { position: absolute; bottom: 70px; }
+  .opt2 .pax-1 { left: 18%; }
+  .opt2 .pax-2 { left: 45%; background: #f1c40f; }
+  .opt2 .pax-3 { left: 72%; background: #27ae60; }
+  .opt2 .bubble {
+    position: absolute; top: 110px; left: 50%; transform: translateX(-50%);
+    background: #ecf0f1; color: #1a1108;
+    font-family: 'VT323', monospace;
+    font-size: 16px; font-weight: 700;
+    padding: 4px 8px;
+    border: 3px solid #1a1108;
+  }
+  .opt2 .input-bar {
+    background: #ffffff;
+    border-top: 1px solid #e5eaf0;
+    padding: 12px 16px;
+    display: flex; gap: 8px;
+  }
+  .opt2 .input {
+    flex: 1;
+    background: #f1f4f8;
+    border: 0;
+    border-radius: 22px;
+    padding: 10px 14px;
+    color: #111;
+    font-size: 14px;
+  }
+  .opt2 .send-btn {
+    background: #3182f6;
+    border: 0;
+    border-radius: 22px;
+    padding: 10px 16px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  /* ===================================================
+     OPT 3. 픽셀 액센트 — 캐릭터만 픽셀, 나머지 A 톤
+     =================================================== */
+  .opt3 .phone { background: linear-gradient(180deg, #e8f1ff 0%, #ffffff 60%); }
+  .opt3 .header {
+    background: rgba(255,255,255,0.95);
+    border-bottom: 1px solid #e5eaf0;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #111;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .opt3 .badge {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #3182f6, #5a9eff);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  }
+  .opt3 .scene {
+    flex: 1;
+    background: linear-gradient(180deg, #e8f1ff 0%, #ffffff 60%);
+    position: relative;
+    overflow: hidden;
+  }
+  .opt3 .windows {
+    position: absolute; top: 16px; left: 12px; right: 12px;
+    height: 80px;
+    display: flex; gap: 8px;
+  }
+  .opt3 .windows > div {
+    flex: 1;
+    background: linear-gradient(180deg, #b1d2ff, #d6e8ff);
+    border-radius: 12px;
+  }
+  .opt3 .seat {
+    position: absolute; bottom: 50px; left: 0; right: 0;
+    height: 50px;
+    background: linear-gradient(180deg, #c2dcff, #9bbef5);
+  }
+  .opt3 .pax-pixel { position: absolute; bottom: 70px; }
+  .opt3 .pax-1 { left: 18%; background: #ff6b3d; }
+  .opt3 .pax-2 { left: 45%; background: #f1c40f; }
+  .opt3 .pax-3 { left: 72%; background: #27ae60; }
+  .opt3 .bubble {
+    position: absolute; top: 110px; left: 50%; transform: translateX(-50%);
+    background: #ffffff; color: #3182f6;
+    font-size: 12px; font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+  .opt3 .input-bar {
+    background: #ffffff;
+    border-top: 1px solid #e5eaf0;
+    padding: 12px 16px;
+    display: flex; gap: 8px;
+  }
+  .opt3 .input {
+    flex: 1;
+    background: #f1f4f8;
+    border: 0;
+    border-radius: 22px;
+    padding: 10px 14px;
+    color: #111;
+    font-size: 14px;
+  }
+  .opt3 .send-btn {
+    background: #3182f6;
+    border: 0;
+    border-radius: 22px;
+    padding: 10px 16px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .meta {
+    padding: 14px 18px 18px;
+    font-size: 12px;
+    color: #555;
+    line-height: 1.55;
+    background: #fafbfc;
+    border-top: 1px solid #f0f1f3;
+  }
+  .meta b { color: #111; }
+  .meta .row { display: flex; justify-content: space-between; margin-top: 6px; }
+  .meta .badge-text {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 11px;
+  }
+  .b-easy { background: #d4f7d4; color: #1a6e1a; }
+  .b-mid  { background: #fff4d4; color: #8b6e00; }
+  .b-hard { background: #ffe0e0; color: #b91c1c; }
+  .b-uniq-h { background: #d4e6ff; color: #1e40af; }
+  .b-uniq-m { background: #f0e6ff; color: #5b21b6; }
+  .b-uniq-l { background: #e9eaee; color: #555; }
+
+  .pick {
+    text-align: center;
+    margin-top: 28px;
+    padding: 16px;
+    background: #fff;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #444;
+  }
+</style>
+</head>
+<body>
+
+<h1>👾 픽셀 적용 범위 3종 비교</h1>
+<p class="sub">D 분위기를 어디까지 적용할지 — 1/2/3 골라주세요</p>
+
+<div class="grid">
+
+  <!-- OPT 1: 풀 픽셀 -->
+  <div class="card opt1">
+    <div class="card__label">
+      <p class="card__title">옵션 1. 풀 픽셀</p>
+      <p class="card__desc">모든 UI 픽셀화 — Stardew Valley 수준</p>
+    </div>
+    <div class="phone">
+      <div class="header">
+        <span>SUBWAY 2</span>
+        <div class="badge"></div>
+      </div>
+      <div class="scene">
+        <div class="windows"><div></div><div></div><div></div></div>
+        <div class="bubble">GG OFFICE</div>
+        <div class="pax-pixel pax-1"></div>
+        <div class="pax-pixel pax-2"></div>
+        <div class="pax-pixel pax-3"></div>
+        <div class="seat"></div>
+      </div>
+      <div class="input-bar">
+        <input class="input" value="ZzZ" />
+        <button class="send-btn">SEND</button>
+      </div>
+    </div>
+    <div class="meta">
+      <b>모든 것 픽셀화</b> — 폰트, 버튼, 입력창, 헤더, 캐릭터, 배경 다.
+      <div class="row"><span>일관성</span><span class="badge-text b-uniq-h">최강</span></div>
+      <div class="row"><span>차별성</span><span class="badge-text b-uniq-h">최강</span></div>
+      <div class="row"><span>작업량</span><span class="badge-text b-hard">큼 (2~3주)</span></div>
+      <div class="row"><span>외부 자산</span><span class="badge-text b-hard">픽셀 폰트 + 캐릭터 16x16 sprite 모두 필요</span></div>
+      <div class="row"><span>TDS 호환</span><span class="badge-text b-hard">대부분 커스텀 styling 필요</span></div>
+      <div class="row"><span>모바일 가독성</span><span class="badge-text b-mid">픽셀 폰트는 작은 글자 읽기 어려움</span></div>
+    </div>
+  </div>
+
+  <!-- OPT 2: 하이브리드 -->
+  <div class="card opt2">
+    <div class="card__label">
+      <p class="card__title">옵션 2. 하이브리드 ⭐</p>
+      <p class="card__desc">UI는 모던, 씬(train)만 픽셀</p>
+    </div>
+    <div class="phone">
+      <div class="header">
+        <span>2호선</span>
+        <div class="badge"></div>
+      </div>
+      <div class="scene">
+        <div class="windows"><div></div><div></div><div></div></div>
+        <div class="bubble">GG OFFICE</div>
+        <div class="pax-pixel pax-1"></div>
+        <div class="pax-pixel pax-2"></div>
+        <div class="pax-pixel pax-3"></div>
+        <div class="seat"></div>
+      </div>
+      <div class="input-bar">
+        <input class="input" value="졸려용" />
+        <button class="send-btn">전송</button>
+      </div>
+    </div>
+    <div class="meta">
+      <b>지하철 칸 화면만 픽셀</b>, 헤더·입력바·버튼은 모던 토스 톤.
+      <div class="row"><span>일관성</span><span class="badge-text b-uniq-m">균형</span></div>
+      <div class="row"><span>차별성</span><span class="badge-text b-uniq-h">강함 (씬이 인스타급)</span></div>
+      <div class="row"><span>작업량</span><span class="badge-text b-mid">중간 (3~5일)</span></div>
+      <div class="row"><span>외부 자산</span><span class="badge-text b-mid">캐릭터 sprite 만 필요 (GPT 생성)</span></div>
+      <div class="row"><span>TDS 호환</span><span class="badge-text b-easy">버튼/입력 그대로 OK</span></div>
+      <div class="row"><span>모바일 가독성</span><span class="badge-text b-easy">UI 텍스트는 일반 폰트 → 좋음</span></div>
+    </div>
+  </div>
+
+  <!-- OPT 3: 픽셀 액센트 -->
+  <div class="card opt3">
+    <div class="card__label">
+      <p class="card__title">옵션 3. 픽셀 액센트</p>
+      <p class="card__desc">기본은 A, 캐릭터만 픽셀로 살짝 살림</p>
+    </div>
+    <div class="phone">
+      <div class="header">
+        <span>2호선</span>
+        <div class="badge"></div>
+      </div>
+      <div class="scene">
+        <div class="windows"><div></div><div></div><div></div></div>
+        <div class="bubble">화이팅 💪</div>
+        <div class="pax-pixel pax-1"></div>
+        <div class="pax-pixel pax-2"></div>
+        <div class="pax-pixel pax-3"></div>
+        <div class="seat"></div>
+      </div>
+      <div class="input-bar">
+        <input class="input" value="좋은 하루" />
+        <button class="send-btn">전송</button>
+      </div>
+    </div>
+    <div class="meta">
+      <b>전체는 그대로 (A 톤), 캐릭터만 픽셀 sprite</b>.
+      <div class="row"><span>일관성</span><span class="badge-text b-uniq-l">살짝 어색</span></div>
+      <div class="row"><span>차별성</span><span class="badge-text b-uniq-m">캐릭터로만 인식</span></div>
+      <div class="row"><span>작업량</span><span class="badge-text b-easy">적음 (1~2일)</span></div>
+      <div class="row"><span>외부 자산</span><span class="badge-text b-easy">캐릭터 sprite 8장 정도</span></div>
+      <div class="row"><span>TDS 호환</span><span class="badge-text b-easy">완벽</span></div>
+      <div class="row"><span>모바일 가독성</span><span class="badge-text b-easy">전혀 영향 없음</span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="pick">
+  💡 <b>제 추천</b>: <b>옵션 2 (하이브리드)</b> — 차별성과 작업량의 균형이 가장 좋아요.
+  <br>씬은 인스타에 올리고 싶을 만큼 독특하고, UI는 사용자가 익숙한 토스 톤이라 학습 비용 없음.
+</div>
+
+</body>
+</html>

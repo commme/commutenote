@@ -1,0 +1,319 @@
+/* =========================================================
+   train.pixel.css — 하이브리드 픽셀 ("아침 출근" 밝은 버전)
+   ---------------------------------------------------------
+   train.css 다음에 import 되어 train scene 만 픽셀 톤으로 덮어씀.
+   UI 셸 (header, composer) 영향 없음.
+   되돌리려면 main.tsx 의 import "./styles/train.pixel.css"; 한 줄 제거.
+   ========================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=VT323&display=swap");
+
+@font-face {
+  font-family: "Galmuri11";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2310@1.0/Galmuri11.woff2") format("woff2");
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =========================================================
+   토큰 — 아침 햇살, 파스텔, 귀여움
+   ========================================================= */
+.train {
+  --px-sky-top: #d6ecff;        /* 새벽 하늘 위쪽 */
+  --px-sky-bottom: #fff5dc;     /* 햇살 닿는 아래쪽 (크림) */
+  --px-cabin-warm: #fff1d6;     /* 칸 내부 따뜻한 아이보리 */
+  --px-cabin-shadow: #ffe2a8;   /* 그림자 */
+
+  --px-window-sky: #b3e0ff;     /* 창밖 아침 하늘 */
+  --px-window-cloud: #ffffff;   /* 구름 */
+
+  --px-seat: #ffb4c8;           /* 파스텔 핑크 좌석 */
+  --px-seat-shadow: #ff89a8;
+  --px-seat-trim: #ff6f9e;
+
+  --px-floor-a: #f4d8a8;        /* 우드 바닥 */
+  --px-floor-b: #e0bf85;
+
+  --px-handrail: #b8c5d6;
+  --px-handrail-strap: #ffd166; /* 노란 끈 */
+
+  --px-light: #fff7c2;          /* 밝은 햇살 */
+  --px-light-glow: rgba(255, 220, 100, 0.6);
+
+  --px-outline: #2d2d2d;        /* 부드러운 검정 */
+  --px-outline-soft: #5a5a5a;
+}
+
+/* =========================================================
+   픽셀 렌더링 (이미지 + SVG 모두)
+   ========================================================= */
+.train,
+.train *,
+.slot,
+.slot *,
+.bubble,
+.bubble * {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* =========================================================
+   배경 — 아침 햇살 그라디언트 (단계별 컬러로 픽셀 느낌)
+   ========================================================= */
+.train {
+  background:
+    linear-gradient(180deg,
+      var(--px-sky-top) 0%,
+      var(--px-sky-top) 18%,
+      var(--px-cabin-warm) 18%,
+      var(--px-cabin-warm) 100%);
+}
+
+/* sway 더 천천히 + 부드럽게 */
+.train__sway {
+  animation-duration: 5s;
+  animation-timing-function: ease-in-out;
+}
+
+/* =========================================================
+   천장 — 부드러운 아이보리 + 작은 햇빛
+   ========================================================= */
+.train__ceiling {
+  background: var(--px-cabin-shadow);
+  border-bottom: 3px solid var(--px-outline);
+  height: 22px;
+}
+
+.train__ceiling-light {
+  background: var(--px-light);
+  border: 2px solid var(--px-outline);
+  border-radius: 0;
+  height: 6px;
+  top: 7px;
+  left: 14%;
+  right: 14%;
+  box-shadow: 0 0 12px 2px var(--px-light-glow);
+}
+
+/* =========================================================
+   손잡이 — 노란 끈 (귀여운 포인트)
+   ========================================================= */
+.train__handrail {
+  top: 22px;
+  height: 36px;
+}
+
+.train__handrail-bar {
+  background: var(--px-handrail);
+  border: 2px solid var(--px-outline);
+  border-radius: 0;
+  height: 5px;
+  top: 4px;
+}
+
+.train__handrail-strap {
+  border-left-width: 3px;
+  border-right-width: 3px;
+  border-color: var(--px-handrail-strap);
+  border-radius: 0;
+  width: 10px;
+  height: 24px;
+  animation-duration: 5s;
+  animation-timing-function: ease-in-out;
+}
+
+.train__handrail-ring {
+  background: var(--px-handrail-strap);
+  border: 2px solid var(--px-outline);
+  border-radius: 0;
+  width: 12px;
+  height: 12px;
+}
+
+/* =========================================================
+   창문 — 아침 하늘 + 흘러가는 구름
+   ========================================================= */
+.train__windows {
+  background: var(--px-window-sky);
+  border-top: 3px solid var(--px-outline);
+  border-bottom: 3px solid var(--px-outline);
+  height: 70px;
+}
+
+.train__windows-bg {
+  background:
+    /* 멀리 떠가는 작은 구름 */
+    radial-gradient(circle at 15% 30%, var(--px-window-cloud) 6px, transparent 7px),
+    radial-gradient(circle at 45% 50%, var(--px-window-cloud) 4px, transparent 5px),
+    radial-gradient(circle at 75% 35%, var(--px-window-cloud) 5px, transparent 6px),
+    radial-gradient(circle at 90% 60%, var(--px-window-cloud) 4px, transparent 5px),
+    /* 푸른 그라디언트 */
+    linear-gradient(180deg, #a0d8ff 0%, #c8e8ff 100%);
+  background-size: 240px 100%, 240px 100%, 240px 100%, 240px 100%, 100% 100%;
+  background-repeat: repeat-x, repeat-x, repeat-x, repeat-x, no-repeat;
+  animation: pixel-cloud-flow 12s linear infinite;
+  opacity: 1;
+}
+
+@keyframes pixel-cloud-flow {
+  from { background-position: 0 0, 0 0, 0 0, 0 0, 0 0; }
+  to   { background-position: -240px 0, -240px 0, -240px 0, -240px 0, 0 0; }
+}
+
+.train__window-frame {
+  border: 3px solid var(--px-outline);
+  border-radius: 0;
+  background: transparent;
+  /* 창문 사이 칸막이 - 아침이라 빛 통과 */
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+/* =========================================================
+   벽 — 따뜻한 아이보리
+   ========================================================= */
+.train__wall {
+  height: 12px;
+  background: var(--px-cabin-shadow);
+  border-bottom: 3px solid var(--px-outline);
+}
+
+/* =========================================================
+   좌석 — 파스텔 핑크 (귀여운 톤)
+   ========================================================= */
+.train__bench-back {
+  background:
+    repeating-linear-gradient(0deg,
+      var(--px-seat) 0px,
+      var(--px-seat) 4px,
+      var(--px-seat-shadow) 4px,
+      var(--px-seat-shadow) 6px);
+  border-top: 3px solid var(--px-outline);
+  border-bottom: 3px solid var(--px-outline);
+  box-shadow: inset 0 -2px 0 var(--px-seat-trim);
+}
+
+.train__bench-seat {
+  background: var(--px-seat-shadow);
+  border-top: 2px solid var(--px-seat-trim);
+  border-bottom: 3px solid var(--px-outline);
+  box-shadow: none;
+  height: 18px;
+}
+
+/* =========================================================
+   바닥 — 따뜻한 우드 (상가 마루 느낌)
+   ========================================================= */
+.train__floor {
+  height: 28px;
+  background:
+    repeating-linear-gradient(90deg,
+      var(--px-floor-a) 0px,
+      var(--px-floor-a) 12px,
+      var(--px-floor-b) 12px,
+      var(--px-floor-b) 14px),
+    repeating-linear-gradient(0deg,
+      transparent 0 3px,
+      rgba(0,0,0,0.08) 3px 4px);
+  border-top: 3px solid var(--px-outline);
+}
+
+/* =========================================================
+   슬롯 / 캐릭터 — 부드러운 그림자
+   ========================================================= */
+.slot__avatar {
+  filter: drop-shadow(2px 2px 0 var(--px-outline));
+}
+
+.slot__avatar.is-mine {
+  filter:
+    drop-shadow(0 0 6px rgba(255, 220, 100, 0.7))
+    drop-shadow(2px 2px 0 var(--px-outline));
+}
+
+/* 점프 모션 — 픽셀 step */
+.slot__bounce.is-jumping {
+  animation-timing-function: steps(4, end);
+}
+
+/* =========================================================
+   말풍선 — 픽셀 박스 (밝은 흰 + 노란 내 거)
+   ========================================================= */
+.bubble {
+  background: #ffffff;
+  color: #2d2d2d;
+  border: 3px solid var(--px-outline);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 var(--px-outline);
+  font-family: "Galmuri11", "VT323", monospace;
+  font-size: 13px;
+  line-height: 1.45;
+  letter-spacing: 0;
+  padding: 7px 10px;
+}
+
+.bubble[data-variant="mine"] {
+  background: #fff7c2;
+  color: var(--px-outline);
+  border-color: var(--px-outline);
+}
+
+.bubble__nick {
+  font-family: "Galmuri11", "VT323", monospace;
+  font-size: 10px;
+  color: #888;
+  text-transform: none;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+
+.bubble__body {
+  font-family: "Galmuri11", "VT323", monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+/* 픽셀 화살표 꼬리 */
+.bubble__tail {
+  width: 8px;
+  height: 8px;
+  background: #ffffff;
+  border-right: 3px solid var(--px-outline);
+  border-bottom: 3px solid var(--px-outline);
+  border-radius: 0;
+  transform: rotate(45deg) translateY(-2px);
+  bottom: -5px;
+}
+
+.bubble[data-variant="mine"] .bubble__tail {
+  background: #fff7c2;
+}
+
+/* 좋아요 버튼 — 핑크 */
+.bubble__like {
+  border: 2px solid var(--px-outline);
+  border-radius: 0;
+  background: #fff;
+  font-family: "VT323", monospace;
+  font-size: 13px;
+  padding: 2px 6px;
+  box-shadow: 2px 2px 0 var(--px-outline);
+}
+
+.bubble__like:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 var(--px-outline);
+}
+
+.bubble__like.is-liked {
+  background: #ffb4c8;
+  color: #fff;
+  border-color: var(--px-outline);
+}
+
+.bubble__like-count {
+  font-family: "VT323", monospace;
+  font-size: 13px;
+  font-weight: 700;
+}
