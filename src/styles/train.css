@@ -482,8 +482,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* 키보드 이동 시 부드럽게 */
-  transition: left 220ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* 이동(탭/키보드/자동배회) 시 부드럽게 "걸어가는" 느낌 */
+  transition:
+    left 500ms cubic-bezier(0.33, 0, 0.2, 1),
+    bottom 500ms cubic-bezier(0.33, 0, 0.2, 1);
 }
 
 .slot__avatar {

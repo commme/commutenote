@@ -21,7 +21,8 @@ import type { Avatar } from "../types";
 import { COOLDOWN_MS } from "../utils/contentFilter";
 
 // 가운데(40~60%) 비워두고 양쪽으로 배치 — 내 캐릭터가 정중앙에 들어감
-const SAMPLE_LAYOUT: Array<{ left: number; bottom: number; size: number }> = [
+type SlotPos = { left: number; bottom: number; size: number };
+const SAMPLE_LAYOUT: SlotPos[] = [
   { left: 8, bottom: 28, size: 70 },
   { left: 23, bottom: 38, size: 72 },
   { left: 36, bottom: 28, size: 70 },
@@ -35,11 +36,26 @@ function pickRandomSlot(): number {
   return Math.floor(Math.random() * SAMPLE_LAYOUT.length);
 }
 
-// 내 캐릭터 X 좌표 한계 (퍼센트)
-const MY_MIN_X = 8;
-const MY_MAX_X = 92;
-const MY_STEP = 4;
-const MY_HOME = 50;
+// 내 캐릭터 좌표 한계
+const MY_MIN_X = 6;
+const MY_MAX_X = 94;
+const MY_HOME_X = 50;
+const MY_STEP_X = 4;
+const MY_MIN_BOTTOM = 2;
+const MY_MAX_BOTTOM = 120; // 바닥부터 좌석 앞쪽까지 — 위로 충분히 올라가게
+const MY_HOME_BOTTOM = 4;
+const MY_STEP_Y = 6;
+
+// 다른 승객 배회 범위 (자기 위치 근처에서만 슬슬)
+const WANDER_MIN_X = 4;
+const WANDER_MAX_X = 96;
+const WANDER_MIN_BOTTOM = 22;
+const WANDER_MAX_BOTTOM = 44;
+const WANDER_X_AMPL = 10; // 한 번에 ±10% 이내
+const WANDER_Y_AMPL = 6; // 한 번에 ±6px 이내
+
+const clamp = (v: number, lo: number, hi: number) =>
+  Math.max(lo, Math.min(hi, v));
 
 // 메시지 보낸 후 잠깐 표정이 happy 로 바뀌는 시간 (ms)
 const HAPPY_DURATION = 2500;
@@ -49,7 +65,12 @@ export function TrainRoomPage() {
   const [cooldownEndsAt, setCooldownEndsAt] = useState<number>(0);
   const [likedIds, setLikedIds] = useState<Set<string>>(() => new Set());
   const [happyUntil, setHappyUntil] = useState<number>(0);
-  const [myX, setMyX] = useState<number>(MY_HOME);
+  const [myX, setMyX] = useState<number>(MY_HOME_X);
+  const [myBottom, setMyBottom] = useState<number>(MY_HOME_BOTTOM);
+  // 다른 승객들 현재 위치 (slotIndex 0..5) — 주기적으로 슬슬 배회
+  const [samplePos, setSamplePos] = useState<SlotPos[]>(() =>
+    SAMPLE_LAYOUT.map((p) => ({ ...p })),
+  );
 
   const lineId = profile.selectedLineId ?? DEFAULT_LINE_ID;
   const line = getLineById(lineId);
@@ -93,12 +114,14 @@ export function TrainRoomPage() {
     [profile.avatar, isHappy],
   );
 
-  // 칸/노선 바뀌면 내 캐릭터 위치 리셋
+  // 칸/노선 바뀌면 내 캐릭터 위치 + 다른 승객 위치 리셋
   useEffect(() => {
-    setMyX(MY_HOME);
+    setMyX(MY_HOME_X);
+    setMyBottom(MY_HOME_BOTTOM);
+    setSamplePos(SAMPLE_LAYOUT.map((p) => ({ ...p })));
   }, [currentCarId, line.id]);
 
-  // 키보드 ←→ 로 내 캐릭터 이동 (입력 중일 땐 무시)
+  // 키보드 ←→↑↓ 로 내 캐릭터 이동 (입력 중일 땐 무시) — 데스크탑용
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       const target = e.target as HTMLElement | null;
@@ -107,17 +130,62 @@ export function TrainRoomPage() {
         target instanceof HTMLTextAreaElement
       )
         return;
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        setMyX((x) => Math.max(MY_MIN_X, x - MY_STEP));
-      } else if (e.key === "ArrowRight") {
-        e.preventDefault();
-        setMyX((x) => Math.min(MY_MAX_X, x + MY_STEP));
+      switch (e.key) {
+        case "ArrowLeft":
+          e.preventDefault();
+          setMyX((x) => clamp(x - MY_STEP_X, MY_MIN_X, MY_MAX_X));
+          break;
+        case "ArrowRight":
+          e.preventDefault();
+          setMyX((x) => clamp(x + MY_STEP_X, MY_MIN_X, MY_MAX_X));
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          setMyBottom((b) => clamp(b + MY_STEP_Y, MY_MIN_BOTTOM, MY_MAX_BOTTOM));
+          break;
+        case "ArrowDown":
+          e.preventDefault();
+          setMyBottom((b) => clamp(b - MY_STEP_Y, MY_MIN_BOTTOM, MY_MAX_BOTTOM));
+          break;
       }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
+
+  // 다른 승객들 자동 배회 — 2.4~4.4초마다 각자 살짝 이동
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setSamplePos((prev) =>
+        prev.map((p) => {
+          // 30% 확률로 가만히 있기 (자연스럽게)
+          if (Math.random() < 0.3) return p;
+          const nx = clamp(
+            p.left + (Math.random() * 2 - 1) * WANDER_X_AMPL,
+            WANDER_MIN_X,
+            WANDER_MAX_X,
+          );
+          const nb = clamp(
+            p.bottom + (Math.random() * 2 - 1) * WANDER_Y_AMPL,
+            WANDER_MIN_BOTTOM,
+            WANDER_MAX_BOTTOM,
+          );
+          return { ...p, left: nx, bottom: nb };
+        }),
+      );
+    }, 2400 + Math.random() * 2000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  // 칸 안 빈 공간 탭 → 내 캐릭터가 그 자리로 (모바일용). yFromBottomPx 는 무대 전체 기준이라
+  // 캐릭터 발 위치에 맞춰 약간 보정 + 바닥~좌석앞 범위로 클램프.
+  const handleAreaTap = useCallback(
+    (xPercent: number, yFromBottomPx: number) => {
+      setMyX(clamp(xPercent, MY_MIN_X, MY_MAX_X));
+      setMyBottom(clamp(yFromBottomPx - 10, MY_MIN_BOTTOM, MY_MAX_BOTTOM));
+    },
+    [],
+  );
 
   const handleSend = useCallback(
     (content: string) => {
@@ -167,14 +235,12 @@ export function TrainRoomPage() {
           onProfileClick={() => navigate("profile")}
         />
         <TickerBanner />
-        <TrainInterior line={line}>
+        <TrainInterior line={line} onAreaTap={handleAreaTap}>
           <AttendanceBadge />
           {SAMPLE_PASSENGERS.map((p) => {
-            const layout = SAMPLE_LAYOUT[p.slotIndex] ?? {
-              left: 50,
-              bottom: 30,
-              size: 72,
-            };
+            const layout =
+              samplePos[p.slotIndex] ??
+              SAMPLE_LAYOUT[p.slotIndex] ?? { left: 50, bottom: 30, size: 72 };
             const msg = otherBySlot.get(p.slotIndex);
             // 실제 사용자 메시지가 이 슬롯을 차지하면 그 사람의 아바타로 덮어씀
             const displayAvatar = msg?.avatar ?? p.avatar;
@@ -199,7 +265,7 @@ export function TrainRoomPage() {
             size={120}
             isMine
             leftPercent={myX}
-            bottomPx={4}
+            bottomPx={myBottom}
             message={myMessage}
           />
         </TrainInterior>

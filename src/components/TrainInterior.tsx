@@ -1,10 +1,15 @@
-import type { ReactNode } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import { getTimeSlot } from "../data/contextualMessages";
 import type { SubwayLine } from "../types";
 
 interface TrainInteriorProps {
   line: SubwayLine;
   children: ReactNode;
+  /**
+   * 칸 안 빈 공간을 탭/클릭하면 호출 — (x퍼센트 0~100, 바닥 기준 y픽셀).
+   * 버튼/말풍선 같은 인터랙티브 요소를 탭한 경우는 호출 안 됨.
+   */
+  onAreaTap?: (xPercent: number, yFromBottomPx: number) => void;
 }
 
 /**
@@ -13,10 +18,27 @@ interface TrainInteriorProps {
  * 시간대에 따라 위에 톤 오버레이를 얹어 퇴근/심야엔 어둡게.
  * children 은 PassengerSlot 들을 절대좌표로 받는다.
  */
-export function TrainInterior({ line, children }: TrainInteriorProps) {
+export function TrainInterior({ line, children, onAreaTap }: TrainInteriorProps) {
   const slot = getTimeSlot();
+
+  const handleClick = (e: MouseEvent<HTMLDivElement>) => {
+    if (!onAreaTap) return;
+    // 버튼(출석 배지, 좋아요 등) 위 탭은 이동으로 처리하지 않음
+    const t = e.target as HTMLElement;
+    if (t.closest("button")) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+    const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+    const yFromBottomPx = rect.bottom - e.clientY;
+    onAreaTap(xPercent, yFromBottomPx);
+  };
+
   return (
-    <div className="train" data-timeslot={slot}>
+    <div
+      className="train"
+      data-timeslot={slot}
+      onClick={handleClick}
+    >
       <div className="train__sway">
         <div
           className="train__bg-img"

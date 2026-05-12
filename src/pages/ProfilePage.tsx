@@ -116,30 +116,10 @@ export function ProfilePage() {
         <span className="profile__spacer" />
       </header>
 
-      <div className="profile__stage">
-        <div className="profile__stage-bg" />
-        <div className="profile__avatar-wrap">
-          <Avatar
-            avatar={draft.avatar}
-            items={draft.equippedItems}
-            size={180}
-            isMine
-          />
-        </div>
-      </div>
+      {/* 1) 출근 게이지 — 맨 위, 풀 너비 */}
+      <AttendanceCard />
 
-      <div className="profile__nick">
-        <label className="profile__nick-label">닉네임</label>
-        <input
-          className="profile__nick-input"
-          value={draft.nickname}
-          onChange={(e) => setDraft({ ...draft, nickname: e.target.value })}
-          maxLength={10}
-          placeholder="익명 닉네임"
-          aria-label="닉네임"
-        />
-      </div>
-
+      {/* 2) 지하철 노선 변경 */}
       {selectedLine && (
         <button
           type="button"
@@ -172,7 +152,30 @@ export function ProfilePage() {
         </button>
       )}
 
-      <AttendanceCard />
+      {/* 3) 캐릭터 — 아바타(스크롤해도 보이게 sticky) + 닉네임 + 꾸미기 */}
+      <div className="profile__stage profile__stage--sticky">
+        <div className="profile__stage-bg" />
+        <div className="profile__avatar-wrap">
+          <Avatar
+            avatar={draft.avatar}
+            items={draft.equippedItems}
+            size={150}
+            isMine
+          />
+        </div>
+      </div>
+
+      <div className="profile__nick">
+        <label className="profile__nick-label">닉네임</label>
+        <input
+          className="profile__nick-input"
+          value={draft.nickname}
+          onChange={(e) => setDraft({ ...draft, nickname: e.target.value })}
+          maxLength={10}
+          placeholder="익명 닉네임"
+          aria-label="닉네임"
+        />
+      </div>
 
       <div className="profile__tabs">
         <Tab onChange={(idx) => setTabIndex(idx)}>
@@ -328,11 +331,11 @@ function AttendanceCard() {
   return (
     <div
       style={{
-        margin: "8px 20px 4px",
-        padding: 16,
-        borderRadius: 16,
-        background: "#fff",
-        border: "1px solid #eceef1",
+        // 풀 너비 배너 — 좌우 여백 없이 화면 끝까지, 위아래 구분선
+        padding: "14px 20px",
+        background: "linear-gradient(180deg, #fff7ed 0%, #ffffff 100%)",
+        borderTop: "1px solid #f0e6da",
+        borderBottom: "1px solid #f0e6da",
       }}
     >
       <div
@@ -343,7 +346,7 @@ function AttendanceCard() {
           marginBottom: 10,
         }}
       >
-        <span style={{ fontSize: 15, fontWeight: 800, color: "#191F28" }}>
+        <span style={{ fontSize: 16, fontWeight: 800, color: "#191F28" }}>
           🔥 {a.streak}일 연속 출근
         </span>
         <span style={{ fontSize: 12, color: "#8B95A1" }}>
@@ -351,16 +354,25 @@ function AttendanceCard() {
         </span>
       </div>
 
-      <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 10 }}>
+      <div
+        style={{
+          display: "flex",
+          gap: 4,
+          flexWrap: "wrap",
+          marginBottom: 10,
+        }}
+      >
         {days.map((d, i) => (
           <div
             key={d.date}
             title={d.date}
             style={{
-              width: 16,
-              height: 16,
+              flex: "1 1 0",
+              minWidth: 12,
+              maxWidth: 22,
+              aspectRatio: "1 / 1",
               borderRadius: 4,
-              background: d.attended ? "#ff7a1a" : "#eceef1",
+              background: d.attended ? "#ff7a1a" : "#eef0f3",
               outline: i === days.length - 1 ? "2px solid #ffcaa0" : "none",
               outlineOffset: 1,
             }}
