@@ -4,7 +4,7 @@
 // 시간대는 3~4시간 블록 6개.
 // =========================================================
 
-type TimeSlot =
+export type TimeSlot =
   | "night"       // 23:00 ~ 05:59  심야/새벽 (~6시간)
   | "morning"     // 06:00 ~ 10:59  출근 (~5시간)
   | "lunch"       // 11:00 ~ 13:59  점심 (~3시간)
@@ -181,4 +181,20 @@ export function buildContextualTickerExtras(now: Date = new Date()): string[] {
     lateEvening: "집으로 가는 길, 푹 쉬어요",
   };
   return [head[getTimeSlot(now)]];
+}
+
+/**
+ * 헤더에 표시할 "열차 방향" 라벨 — 시간대별.
+ * 출근행 / 점심행 / 오후행 / 퇴근행 / 귀가행 / 막차행
+ */
+export function getTrainDirectionLabel(now: Date = new Date()): string {
+  const label: Record<TimeSlot, string> = {
+    night: "막차행",
+    morning: "출근행",
+    lunch: "점심행",
+    afternoon: "오후행",
+    evening: "퇴근행",
+    lateEvening: "퇴근행",
+  };
+  return label[getTimeSlot(now)];
 }

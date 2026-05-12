@@ -22,11 +22,18 @@ interface AppContextValue {
   profile: Profile;
   line: SubwayLine | null;
   currentCarId: number;
+  /** 화면 이동(앞으로) — 브라우저 히스토리에 push 해서 토스 뒤로가기 버튼이 pop 할 수 있게 함 */
   navigate: (page: Page) => void;
+  /** 뒤로가기 — 토스 nav bar 뒤로가기와 동일 동작 (history.back → popstate) */
+  goBack: () => void;
   selectLine: (line: SubwayLine) => void;
   updateProfile: (updates: Partial<Profile>) => void;
   setProfile: (profile: Profile) => void;
   setCurrentCarId: (updater: number | ((prev: number) => number)) => void;
+}
+
+interface HistoryPageState {
+  __appPage?: Page;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -79,14 +86,50 @@ export function AppProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const navigate = useCallback((next: Page) => setPage(next), []);
+  // 화면 이동: 브라우저 히스토리에 push → 토스 nav bar 의 뒤로가기 버튼이 이 엔트리를 pop 함
+  const navigate = useCallback((next: Page) => {
+    setPage(next);
+    try {
+      const st: HistoryPageState = { __appPage: next };
+      window.history.pushState(st, "");
+    } catch {
+      // History API 가 없는 드문 환경 — 무시 (그래도 page 상태는 바뀜)
+    }
+  }, []);
+
+  // 뒤로가기: history.back() → popstate 핸들러가 page 복원.
+  // 더 pop 할 게 없으면 (루트) 토스가 미니앱을 종료시킴.
+  const goBack = useCallback(() => {
+    try {
+      window.history.back();
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  // 토스 nav bar 의 뒤로가기 버튼 = WebView 의 history.back() → popstate.
+  // 우리가 push 한 엔트리를 복원하고, 다 pop 되면 (state 없음) 루트 화면으로.
+  useEffect(() => {
+    const onPop = (e: PopStateEvent) => {
+      const st = e.state as HistoryPageState | null;
+      if (st && typeof st.__appPage === "string") {
+        setPage(st.__appPage);
+      } else {
+        // 우리 엔트리를 다 pop 함 = 루트. 루트는 선택 노선 유무로 결정.
+        const p = readProfile();
+        setPage(p.selectedLineId ? "train-room" : "line-select");
+      }
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
 
   const selectLine = useCallback(
     (selected: SubwayLine) => {
       updateProfile({ selectedLineId: selected.id });
-      setPage("train-entry");
+      navigate("train-entry");
     },
-    [updateProfile],
+    [updateProfile, navigate],
   );
 
   const value = useMemo<AppContextValue | null>(
@@ -98,6 +141,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
             line,
             currentCarId,
             navigate,
+            goBack,
             selectLine,
             updateProfile,
             setProfile,
@@ -110,6 +154,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       line,
       currentCarId,
       navigate,
+      goBack,
       selectLine,
       updateProfile,
       setProfile,

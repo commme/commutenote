@@ -66,7 +66,7 @@ const BAGS: { id: string | null; label: string }[] = [
 ];
 
 export function ProfilePage() {
-  const { profile, setProfile, navigate } = useApp();
+  const { profile, setProfile, navigate, goBack } = useApp();
   const [draft, setDraft] = useState<Profile>(profile);
   const [tabIndex, setTabIndex] = useState<number>(0);
 
@@ -94,7 +94,8 @@ export function ProfilePage() {
       ...draft,
       nickname: trimmedNick.length > 0 ? trimmedNick : profile.nickname,
     });
-    navigate(profile.selectedLineId ? "train-room" : "line-select");
+    // 저장하고 이전 화면(보통 열차칸)으로 — 히스토리 pop
+    goBack();
   };
 
   const currentBag =
@@ -109,28 +110,8 @@ export function ProfilePage() {
   return (
     <div className="profile">
       <header className="profile__header">
-        <button
-          type="button"
-          className="profile__back"
-          onClick={() =>
-            navigate(profile.selectedLineId ? "train-room" : "line-select")
-          }
-          aria-label="이전 화면으로"
-        >
-          <svg
-            width="22"
-            height="22"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#191F28"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-          >
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
+        {/* 뒤로가기는 토스 nav bar 의 버튼을 사용 (자체 뒤로가기 버튼 중복 노출 방지) */}
+        <span className="profile__spacer" />
         <h1 className="profile__title">내 캐릭터 꾸미기</h1>
         <span className="profile__spacer" />
       </header>

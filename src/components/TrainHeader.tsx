@@ -1,3 +1,4 @@
+import { getTrainDirectionLabel } from "../data/contextualMessages";
 import type { Car, SubwayLine } from "../types";
 
 interface TrainHeaderProps {
@@ -7,10 +8,11 @@ interface TrainHeaderProps {
 }
 
 /**
- * 열차 상단 헤더 — 노선 배지 + "출근행" + 프로필 진입
+ * 열차 상단 헤더 — 노선 배지 + 시간대별 방향(출근행/퇴근행/...) + 프로필 진입
  * 열차 무대 위에 얹히는 형태라 TDS Top 대신 커스텀 디자인.
  */
 export function TrainHeader({ line, car, onProfileClick }: TrainHeaderProps) {
+  const direction = getTrainDirectionLabel();
   return (
     <header className="train-header">
       <div className="train-header__line">
@@ -24,7 +26,7 @@ export function TrainHeader({ line, car, onProfileClick }: TrainHeaderProps) {
         <span className="train-header__line-name">{line.name}</span>
       </div>
       <div className="train-header__center">
-        <div className="train-header__title">출근행</div>
+        <div className="train-header__title">{direction}</div>
         <div className="train-header__sub">{car.label}</div>
       </div>
       <button
