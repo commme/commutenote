@@ -1,0 +1,13 @@
+# GitHub Pages 빌드 설정
+# 정책 문서(legal/)와 랜딩(index.md)만 사이트로 빌드한다.
+# skills/* 등 내부 참조 문서는 Liquid 문법 충돌·불필요로 빌드에서 제외.
+exclude:
+  - skills
+  - design-mood
+  - launch-checklist.csv
+  - launch-checklist.md
+  - test-qr.html
+  - README.md
+
+# Jekyll 플러그인 없이 최소 빌드
+plugins: []
