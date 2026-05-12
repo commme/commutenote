@@ -3,6 +3,12 @@ import { useState } from "react";
 import { Avatar } from "../components/Avatar";
 import { useApp } from "../contexts/AppContext";
 import { getLineById } from "../data/subwayLines";
+import {
+  getAttendance,
+  nextMilestone,
+  daysToNextMilestone,
+  recentDays,
+} from "../services/attendanceService";
 import type {
   Avatar as AvatarType,
   Expression,
@@ -185,6 +191,8 @@ export function ProfilePage() {
         </button>
       )}
 
+      <AttendanceCard />
+
       <div className="profile__tabs">
         <Tab onChange={(idx) => setTabIndex(idx)}>
           {TABS.map((t, i) => (
@@ -325,6 +333,69 @@ export function ProfilePage() {
           저장하고 열차로
         </Button>
       </div>
+    </div>
+  );
+}
+
+/** 출석체크 요약 카드 — 연속/총/최장 + 최근 14일 점 달력 + 다음 목표 */
+function AttendanceCard() {
+  const a = getAttendance();
+  const days = recentDays(14);
+  const next = nextMilestone(a.streak);
+  const left = daysToNextMilestone(a.streak);
+
+  return (
+    <div
+      style={{
+        margin: "8px 20px 4px",
+        padding: 16,
+        borderRadius: 16,
+        background: "#fff",
+        border: "1px solid #eceef1",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "baseline",
+          justifyContent: "space-between",
+          marginBottom: 10,
+        }}
+      >
+        <span style={{ fontSize: 15, fontWeight: 800, color: "#191F28" }}>
+          🔥 {a.streak}일 연속 출근
+        </span>
+        <span style={{ fontSize: 12, color: "#8B95A1" }}>
+          총 {a.total}일 · 최장 {a.longest}일
+        </span>
+      </div>
+
+      <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 10 }}>
+        {days.map((d, i) => (
+          <div
+            key={d.date}
+            title={d.date}
+            style={{
+              width: 16,
+              height: 16,
+              borderRadius: 4,
+              background: d.attended ? "#ff7a1a" : "#eceef1",
+              outline: i === days.length - 1 ? "2px solid #ffcaa0" : "none",
+              outlineOffset: 1,
+            }}
+          />
+        ))}
+      </div>
+
+      {next && left != null ? (
+        <div style={{ fontSize: 12, color: "#6B7684" }}>
+          다음 목표 <b style={{ color: "#ff7a1a" }}>{next}일</b> 까지 {left}일 남음
+        </div>
+      ) : (
+        <div style={{ fontSize: 12, color: "#3182f6", fontWeight: 700 }}>
+          🏆 최고 단계 달성! 계속 이어가요
+        </div>
+      )}
     </div>
   );
 }

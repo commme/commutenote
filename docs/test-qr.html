@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>commutenote 테스트 QR</title>
+<style>
+  body {
+    margin: 0; min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-family: -apple-system, "Pretendard", sans-serif; background: #f5f6f8; color: #222;
+    padding: 24px; text-align: center;
+  }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: #888; font-size: 13px; margin-bottom: 24px; }
+  .qrbox { background: #fff; padding: 24px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .qrbox img { display: block; width: 280px; height: 280px; }
+  .link {
+    margin-top: 20px; font-size: 12px; color: #555; word-break: break-all; max-width: 380px;
+    background: #fff; padding: 12px 16px; border-radius: 10px; border: 1px solid #e5e5ea;
+    user-select: all; cursor: text;
+  }
+  .link-label { font-size: 11px; color: #aaa; margin-top: 16px; }
+  .steps { margin-top: 28px; text-align: left; max-width: 400px; font-size: 14px; line-height: 1.7; }
+  .steps b { color: #3182f6; }
+  .alt { margin-top: 20px; font-size: 12px; color: #999; max-width: 380px; }
+</style>
+</head>
+<body>
+  <h1>📱 commutenote 테스트</h1>
+  <p class="sub">폰의 토스 앱으로 이 QR을 스캔하세요</p>
+
+  <div class="qrbox">
+    <img
+      src="https://api.qrserver.com/v1/create-qr-code/?size=280x280&margin=4&data=intoss-private%3A%2F%2Fcommutenote%3F_deploymentId%3D019e1ac6-15b5-7a73-a69e-dbad67ac4ee0"
+      alt="commutenote 테스트 QR 코드"
+      onerror="this.parentElement.innerHTML='<p style=&quot;color:#c00;font-size:13px;&quot;>QR 이미지 로드 실패 — 아래 링크를 폰으로 직접 보내서 여세요</p>'"
+    />
+  </div>
+
+  <div class="link-label">QR 안 되면 — 이 링크를 복사해서 폰으로 보내세요 (카톡 나에게 보내기 등):</div>
+  <div class="link">intoss-private://commutenote?_deploymentId=019e1ac6-15b5-7a73-a69e-dbad67ac4ee0</div>
+
+  <div class="steps">
+    <b>1.</b> 폰에서 <b>토스 앱</b> 열기 (송금할 때 쓰는 그거)<br>
+    <b>2.</b> 토스 앱 안의 QR 스캔 기능으로 위 QR 스캔<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<small style="color:#999">(또는 폰 카메라로 QR 스캔 → "토스로 열기" 뜨면 탭)</small><br>
+    <b>3.</b> "commutenote 미니앱을 여시겠어요?" → 열기<br>
+    <b>4.</b> 미니앱 로드 → 노선 선택 → 칸 진입 → 테스트<br>
+  </div>
+
+  <div class="alt">
+    ※ 콘솔에 등록된 본인 토스 계정으로 로그인돼 있어야 권한이 있어요.<br>
+    ※ 콘솔 → 내 앱 → 배포 내역 (019e1ac6...) 에도 QR이 있어요.
+  </div>
+</body>
+</html>

@@ -1,8 +1,6 @@
 import { useEffect } from "react";
-import {
-  SAMPLE_MESSAGES,
-  SAMPLE_PASSENGERS,
-} from "../data/samplePassengers";
+import { pickContextualMessage } from "../data/contextualMessages";
+import { SAMPLE_PASSENGERS } from "../data/samplePassengers";
 import { messageStore } from "../services/messageService";
 import { hasSupabaseConfig } from "../services/supabase";
 
@@ -21,8 +19,8 @@ export function useSampleMessageDemo(carId: number, lineId: string): void {
       if (cancelled) return;
       const passenger =
         SAMPLE_PASSENGERS[Math.floor(Math.random() * SAMPLE_PASSENGERS.length)];
-      const content =
-        SAMPLE_MESSAGES[Math.floor(Math.random() * SAMPLE_MESSAGES.length)];
+      // 현재 시각·요일에 어울리는 메시지 (퇴근시간엔 퇴근 얘기, 월요일엔 월요병 등)
+      const content = pickContextualMessage();
       messageStore.add({
         userId: passenger.id,
         nickname: passenger.nickname,

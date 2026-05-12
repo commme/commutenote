@@ -1,7 +1,7 @@
 import { defineConfig } from "@apps-in-toss/web-framework/config";
 
 export default defineConfig({
-  appName: "today-office",
+  appName: "commutenote",
   brand: {
     displayName: "오늘도 출근합니다",
     primaryColor: "#3182F6",

@@ -4,13 +4,20 @@ import { useApp } from "../contexts/AppContext";
 import { SUBWAY_LINES } from "../data/subwayLines";
 import { makeTransparent } from "../utils/transparentImage";
 
-// 노선 id → GPT 3D 토이 아이콘 PNG (line-sb 는 PNG 없어서 fallback)
+// 노선 id → GPT 3D 토이 아이콘 PNG (1~9호선만 PNG, 나머지는 컬러 squircle fallback)
 const LINE_ICON: Record<string, string | undefined> = {
+  "line-1": "/assets/lines/line-01-subway.png",
   "line-2": "/assets/lines/line-02-subway.png",
   "line-3": "/assets/lines/line-03-subway.png",
+  "line-4": "/assets/lines/line-04-subway.png",
+  "line-5": "/assets/lines/line-05-subway.png",
+  "line-6": "/assets/lines/line-06-subway.png",
   "line-7": "/assets/lines/line-07-subway.png",
+  "line-8": "/assets/lines/line-08-subway.png",
   "line-9": "/assets/lines/line-09-subway.png",
   "line-sb": undefined,
+  "line-bundang": undefined,
+  "line-gm": undefined,
 };
 
 function useTransparent(src: string): string {

@@ -1,41 +1,91 @@
 import type { SubwayLine, Car } from "../types";
 
 // 노선 정의 — 헤더/도어/벽 포인트 컬러로 사용
+// 컬러는 서울교통공사 공식 라인 컬러 기준
 export const SUBWAY_LINES: SubwayLine[] = [
+  {
+    id: "line-1",
+    name: "1호선",
+    shortLabel: "1",
+    color: "#0052A4",
+    description: "수도권을 길게 잇는 맏형",
+  },
   {
     id: "line-2",
     name: "2호선",
     shortLabel: "2",
-    color: "#34C759",
+    color: "#00A84D",
     description: "순환선 직장인의 영원한 친구",
   },
   {
     id: "line-3",
     name: "3호선",
     shortLabel: "3",
-    color: "#FF8A3D",
+    color: "#EF7C1C",
     description: "출근길 대각선 횡단",
+  },
+  {
+    id: "line-4",
+    name: "4호선",
+    shortLabel: "4",
+    color: "#00A5DE",
+    description: "하늘색 라인의 든든한 출근",
+  },
+  {
+    id: "line-5",
+    name: "5호선",
+    shortLabel: "5",
+    color: "#996CAC",
+    description: "보라색 라인 따라 한강 건너",
+  },
+  {
+    id: "line-6",
+    name: "6호선",
+    shortLabel: "6",
+    color: "#CD7C2F",
+    description: "갈색 라인의 잔잔한 출근",
   },
   {
     id: "line-7",
     name: "7호선",
     shortLabel: "7",
-    color: "#7D8B2E",
+    color: "#747F00",
     description: "초록 라인의 묵직한 출근",
+  },
+  {
+    id: "line-8",
+    name: "8호선",
+    shortLabel: "8",
+    color: "#E6186C",
+    description: "분홍 라인의 짧고 굵은 출근",
   },
   {
     id: "line-9",
     name: "9호선",
     shortLabel: "9",
-    color: "#C6A34A",
+    color: "#BDB092",
     description: "급행으로 빠르게 출근",
   },
   {
     id: "line-sb",
     name: "신분당선",
     shortLabel: "신",
-    color: "#E2574C",
+    color: "#D4003B",
     description: "남쪽에서 강남으로",
+  },
+  {
+    id: "line-bundang",
+    name: "수인분당선",
+    shortLabel: "분",
+    color: "#FABE00",
+    description: "분당·수원 출근러의 동맥",
+  },
+  {
+    id: "line-gm",
+    name: "경의중앙선",
+    shortLabel: "경",
+    color: "#77C4A3",
+    description: "서쪽에서 동쪽까지 길게",
   },
 ];
 

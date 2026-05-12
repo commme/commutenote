@@ -14,7 +14,11 @@ export const TICKER_MESSAGES: string[] = [
   "지금 이 칸에 같이 있는 사람들도 비슷해요",
 ];
 
-// 한 줄로 합쳐서 끊김 없이 흐르게
+// 한 줄로 합쳐서 끊김 없이 흐르게.
+// 맨 앞에 현재 시간대에 맞는 한 줄을 끼워넣어 자연스럽게.
+import { buildContextualTickerExtras } from "./contextualMessages";
+
 export function buildTickerLine(): string {
-  return [TICKER_PREFIX, ...TICKER_MESSAGES].join("  ·  ");
+  const contextual = buildContextualTickerExtras();
+  return [TICKER_PREFIX, ...contextual, ...TICKER_MESSAGES].join("  ·  ");
 }

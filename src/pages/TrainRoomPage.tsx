@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { AttendanceBadge } from "../components/AttendanceBadge";
 import { ChatInputBar } from "../components/ChatInputBar";
 import { PassengerSlot } from "../components/PassengerSlot";
 import { TickerBanner } from "../components/TickerBanner";
@@ -167,6 +168,7 @@ export function TrainRoomPage() {
         />
         <TickerBanner />
         <TrainInterior line={line}>
+          <AttendanceBadge />
           {SAMPLE_PASSENGERS.map((p) => {
             const layout = SAMPLE_LAYOUT[p.slotIndex] ?? {
               left: 50,
