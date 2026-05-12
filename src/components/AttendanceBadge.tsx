@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   daysToNextMilestone,
+  milestoneProgress,
   nextMilestone,
   recentDays,
   recordAttendance,
@@ -158,17 +159,14 @@ function DotCalendar() {
 function MilestoneRow({ streak }: { streak: number }) {
   const next = nextMilestone(streak);
   const left = daysToNextMilestone(streak);
-  if (!next || left == null) {
+  if (next == null || left == null) {
     return (
       <div style={{ fontSize: 12, color: "#3182f6", fontWeight: 700 }}>
         🏆 최고 단계 달성! 계속 이어가요
       </div>
     );
   }
-  const prev = next - left - streak >= 0 ? next - left : 0; // not exact, just for bar
-  const total = next - prev;
-  const done = streak - prev;
-  const ratio = total > 0 ? Math.max(0, Math.min(1, done / total)) : 0;
+  const ratio = milestoneProgress(streak);
   return (
     <div>
       <div style={{ fontSize: 12, color: "#555", marginBottom: 4 }}>
@@ -188,6 +186,7 @@ function MilestoneRow({ streak }: { streak: number }) {
             height: "100%",
             background: "#ff7a1a",
             borderRadius: 999,
+            transition: "width 0.4s ease",
           }}
         />
       </div>

@@ -118,6 +118,26 @@ export function nextMilestone(streak: number): number | undefined {
   return undefined;
 }
 
+/** streak 이하의 가장 큰 마일스톤 (아직 첫 마일스톤 전이면 0) */
+export function prevMilestone(streak: number): number {
+  let p = 0;
+  for (const m of STREAK_MILESTONES) {
+    if (m <= streak) p = m;
+    else break;
+  }
+  return p;
+}
+
+/** 다음 마일스톤까지의 진행률 0..1 (이전 마일스톤 기준). 최고 단계면 1 */
+export function milestoneProgress(streak: number): number {
+  const next = nextMilestone(streak);
+  if (next == null) return 1;
+  const prev = prevMilestone(streak);
+  const span = next - prev;
+  if (span <= 0) return 0;
+  return Math.max(0, Math.min(1, (streak - prev) / span));
+}
+
 /**
  * 최근 N일의 출석 여부 배열 (오늘 포함, 과거→현재 순).
  * 예: last 14 days → [true, false, true, ...] 길이 14
