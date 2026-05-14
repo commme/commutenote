@@ -90,6 +90,11 @@ begin
     raise exception 'SPAM_REPEAT_DETECTED' using errcode = '22000';
   end if;
 
+  -- 8-1) 타인에 대한 위협/폭력 (자살/자해와 분리 — 그건 클라이언트에서 1393 안내)
+  if new.content ~* '(죽이고\s*싶|죽여\s*버|죽여\s*줄|죽일\s*거(야|에요)|살해|패고\s*싶|때리고\s*싶|두들겨\s*패|칼로\s*찌|폭력|폭행|협박|패\s*죽이|짓밟|박살\s*낼)' then
+    raise exception 'VIOLENCE_DETECTED' using errcode = '22000';
+  end if;
+
   -- 9) 욕설 매칭 (강화 정규화 — 공백/숫자/특수문자 제거 후 lower)
   normalized := lower(regexp_replace(new.content, '[\s\d\!\@\#\$\%\^\&\*\.\,\?\-\_]+', '', 'g'));
   foreach bad_word in array bad_words loop

@@ -82,6 +82,10 @@ const PROMOTION =
 
 const SPAM_REPEAT = /(.)\1{7,}/; // 같은 글자 8회 이상
 
+// 타인을 향한 위협/폭력 — 차단
+const VIOLENCE =
+  /(죽이고\s*싶|죽여\s*버|죽여\s*줄|죽일\s*거(야|에요)|살해|패고\s*싶|때리고\s*싶|두들겨\s*패|칼로\s*찌|폭력|폭행|협박|패\s*죽이|짓밟|박살\s*낼)/i;
+
 // 자살/자해 — 차단하지 않고 1393 안내만 (혼자 힘들어하는 신호일 수 있음)
 const DISTRESS =
   /(자살|자해|죽고\s*싶|뛰어내리|목매|손목\s*긋|살기\s*싫|살\s*의지|숨\s*쉬기\s*싫|사라지고\s*싶)/i;
@@ -132,6 +136,11 @@ export function validateMessage(input: string): ValidationResult {
   // 6) 도배 스팸
   if (SPAM_REPEAT.test(trimmed)) {
     return { ok: false, reason: "같은 글자가 너무 길게 반복돼요." };
+  }
+
+  // 6-1) 타인 향한 위협/폭력
+  if (VIOLENCE.test(trimmed)) {
+    return { ok: false, reason: "위협·폭력 표현은 보낼 수 없어요." };
   }
 
   // 7) 욕설 (강화 정규화 — 공백/숫자/특수문자 제거 후 lower)
