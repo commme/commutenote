@@ -67,6 +67,7 @@ class MessageStore {
   /**
    * 새 메시지 추가. 같은 userId 의 이전 메시지는 교체.
    * 클라우드 모드면 fire-and-forget 으로 publish.
+   * local=true 면 publish 스킵 (샘플 캐릭터의 분위기 유지용 메시지에 사용).
    */
   add(input: {
     userId: string;
@@ -78,6 +79,7 @@ class MessageStore {
     avatar: Avatar;
     items?: string[];
     ttl?: number;
+    local?: boolean;
   }): Message {
     const ttl = input.ttl ?? MESSAGE_TTL_MS;
     const now = Date.now();
@@ -100,7 +102,7 @@ class MessageStore {
     this.messages.push(msg);
     this.notify();
 
-    if (hasSupabaseConfig) {
+    if (hasSupabaseConfig && !input.local) {
       void publishMessage(msg);
     }
 

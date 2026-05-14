@@ -803,6 +803,23 @@
   animation: bubble-in 220ms ease;
 }
 
+/* 자살/자해 신호 안내 — 차단 아님, 친절한 케어 메시지 */
+.chat-bar__notice {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 16px;
+  right: 16px;
+  background: #FFE9C2;
+  color: #6B3F00;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 8px 16px rgba(107, 63, 0, 0.18);
+  animation: bubble-in 240ms ease;
+}
+
 /* 키보드 힌트 */
 .chat-bar__hint {
   position: absolute;

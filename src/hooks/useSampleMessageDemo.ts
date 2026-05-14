@@ -30,6 +30,7 @@ export function useSampleMessageDemo(carId: number, lineId: string): void {
         slotIndex: passenger.slotIndex,
         avatar: passenger.avatar,
         items: [],
+        local: true, // 샘플은 DB publish 안 함 — 분위기 유지용 로컬 전용
       });
     }
 

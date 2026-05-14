@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { MAX_MESSAGE_LENGTH, validateMessage } from "../utils/contentFilter";
+import {
+  MAX_MESSAGE_LENGTH,
+  detectDistress,
+  validateMessage,
+} from "../utils/contentFilter";
 
 interface ChatInputBarProps {
   cooldownRemainingMs: number;
@@ -25,7 +29,9 @@ export function ChatInputBar({
 }: ChatInputBarProps) {
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const noticeTimerRef = useRef<number | null>(null);
 
   const isCooling = cooldownRemainingMs > 0;
   const sendDisabled = isCooling || value.trim().length === 0;
@@ -36,6 +42,12 @@ export function ChatInputBar({
       setError(null);
     }
   }, [cooldownRemainingMs, error]);
+
+  useEffect(() => {
+    return () => {
+      if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
+    };
+  }, []);
 
   const handleSend = () => {
     if (isCooling) {
@@ -48,9 +60,16 @@ export function ChatInputBar({
       setError(result.reason);
       return;
     }
+    // 자살/자해 신호 — 차단하지 않고 1393 안내 토스트만 띄움
+    const isDistress = detectDistress(result.cleaned);
     onSend(result.cleaned);
     setValue("");
     setError(null);
+    if (isDistress) {
+      setNotice("혼자 힘들어 마세요. 자살예방상담 ☎ 1393 (24시간)");
+      if (noticeTimerRef.current) window.clearTimeout(noticeTimerRef.current);
+      noticeTimerRef.current = window.setTimeout(() => setNotice(null), 8000);
+    }
     inputRef.current?.focus();
   };
 
@@ -107,6 +126,11 @@ export function ChatInputBar({
         <ArrowIcon dir="right" />
       </button>
       {error && <div className="chat-bar__error">{error}</div>}
+      {notice && (
+        <div className="chat-bar__notice" role="status" aria-live="polite">
+          {notice}
+        </div>
+      )}
     </div>
   );
 }

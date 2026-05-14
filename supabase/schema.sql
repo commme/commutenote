@@ -122,12 +122,17 @@ begin
 end $$;
 
 -- =============================================================================
--- (선택) 만료 메시지 자동 정리 — pg_cron 활성화 후 사용 가능
--- supabase Dashboard → Database → Extensions 에서 pg_cron 활성화
+-- 만료 메시지 자동 정리 (개인정보 처리방침: "전송 후 10초 자동 영구 삭제" 이행)
+-- 사전 작업: Supabase Dashboard → Database → Extensions 에서 pg_cron 활성화
 -- =============================================================================
--- create extension if not exists pg_cron;
--- select cron.schedule(
---   'cleanup-expired-messages',
---   '*/5 * * * *',
---   $$delete from public.messages where expires_at < now() - interval '10 minutes'$$
--- );
+create extension if not exists pg_cron;
+
+-- 1분마다 실행. expires_at이 10초 이상 지난 row 삭제 → 화면 사라진 직후 DB도 비움
+select cron.schedule(
+  'cleanup-expired-messages',
+  '*/1 * * * *',
+  $$delete from public.messages where expires_at < now() - interval '10 seconds'$$
+);
+
+-- 누적된 만료 메시지 즉시 1회 정리 (재실행해도 안전)
+delete from public.messages where expires_at < now();
