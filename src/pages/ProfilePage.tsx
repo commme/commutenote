@@ -2,6 +2,7 @@ import { Button, Tab } from "@toss/tds-mobile";
 import { useState } from "react";
 import { Avatar } from "../components/Avatar";
 import { useApp } from "../contexts/AppContext";
+import { getItemDefinition } from "../data/items";
 import { getLineById } from "../data/subwayLines";
 import {
   getAttendance,
@@ -9,6 +10,10 @@ import {
   daysToNextMilestone,
   recentDays,
 } from "../services/attendanceService";
+import {
+  describeUnlockCondition,
+  isItemAvailable,
+} from "../services/unlockService";
 import type {
   Avatar as AvatarType,
   Expression,
@@ -57,6 +62,11 @@ const ACCESSORIES: { id: string; label: string }[] = [
   { id: "acc-coffee", label: "커피컵" },
   { id: "acc-earphones", label: "이어폰" },
   { id: "acc-mask", label: "마스크" },
+  // 잠금 해제 보상 (V1.2)
+  { id: "acc-bear-hat", label: "곰돌이 비니" },
+  { id: "acc-pink-ribbon", label: "분홍 리본" },
+  { id: "acc-crown", label: "출근왕 왕관" },
+  { id: "acc-star-badge", label: "한 달 별 뱃지" },
 ];
 
 const BAGS: { id: string | null; label: string }[] = [
@@ -265,23 +275,45 @@ export function ProfilePage() {
             <div className="opt-grid">
               {ACCESSORIES.map((a) => {
                 const equipped = draft.equippedItems.includes(a.id);
+                const available = isItemAvailable(a.id);
+                const def = getItemDefinition(a.id);
+                const lockHint =
+                  !available && def?.unlockBy
+                    ? describeUnlockCondition(def.unlockBy)
+                    : null;
                 return (
                   <button
                     key={a.id}
                     type="button"
-                    className={`opt-card${equipped ? " is-selected" : ""}`}
-                    onClick={() => toggleAccessory(a.id)}
+                    className={`opt-card${equipped ? " is-selected" : ""}${!available ? " is-locked" : ""}`}
+                    onClick={() => {
+                      if (!available) return;
+                      toggleAccessory(a.id);
+                    }}
+                    aria-disabled={!available}
+                    title={lockHint ?? undefined}
                   >
                     <div className="opt-card__preview">
                       <Avatar avatar={draft.avatar} items={[a.id]} size={64} />
+                      {!available && (
+                        <span className="opt-card__lock-icon" aria-hidden>
+                          🔒
+                        </span>
+                      )}
                     </div>
-                    <div className="opt-card__label">{a.label}</div>
+                    <div className="opt-card__label">
+                      {a.label}
+                      {lockHint && (
+                        <span className="opt-card__lock-hint">{lockHint}</span>
+                      )}
+                    </div>
                   </button>
                 );
               })}
             </div>
             <div className="opt-section-label">
-              여러 개를 동시에 착용할 수 있어요
+              여러 개를 동시에 착용할 수 있어요 · 🔒 표시는 잠금 해제 조건
+              달성 시 사용 가능
             </div>
           </>
         )}

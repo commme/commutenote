@@ -90,6 +90,8 @@ export function PassengerSlot({
             likeCount={message.likeCount}
             liked={liked}
             onLike={isMine ? undefined : handleLikeWithBurst}
+            // 샘플 캐릭터(sp- 접두어)는 분위기용 — 시각적 구분 점
+            isSample={message.userId.startsWith("sp-")}
           />
         </div>
       )}

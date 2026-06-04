@@ -29,8 +29,42 @@ export const ITEM_CATALOG: ItemDefinition[] = [
   { id: "acc-coffee", category: "accessory", name: "커피컵", isDefault: false },
   { id: "acc-earphones", category: "accessory", name: "이어폰", isDefault: false },
   { id: "acc-mask", category: "accessory", name: "마스크", isDefault: false },
+
+  // 잠금 해제 보상 아이템 (V1.2)
+  {
+    id: "acc-bear-hat",
+    category: "accessory",
+    name: "곰돌이 비니",
+    isDefault: false,
+    unlockBy: { type: "first-message" },
+  },
+  {
+    id: "acc-pink-ribbon",
+    category: "accessory",
+    name: "분홍 리본",
+    isDefault: false,
+    unlockBy: { type: "streak-milestone", days: 3 },
+  },
+  {
+    id: "acc-crown",
+    category: "accessory",
+    name: "출근왕 왕관",
+    isDefault: false,
+    unlockBy: { type: "streak-milestone", days: 7 },
+  },
+  {
+    id: "acc-star-badge",
+    category: "accessory",
+    name: "한 달 별 뱃지",
+    isDefault: false,
+    unlockBy: { type: "streak-milestone", days: 30 },
+  },
 ];
 
 export function getItemsByCategory(category: ItemDefinition["category"]): ItemDefinition[] {
   return ITEM_CATALOG.filter((item) => item.category === category);
+}
+
+export function getItemDefinition(id: string): ItemDefinition | undefined {
+  return ITEM_CATALOG.find((item) => item.id === id);
 }

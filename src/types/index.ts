@@ -53,6 +53,19 @@ export interface Message {
   items: string[];
 }
 
+/**
+ * 아이템 잠금 해제 조건.
+ * - default: 처음부터 사용 가능
+ * - first-message: 사용자가 첫 메시지를 보내면 해제
+ * - streak-milestone: 연속 출근 N일 달성 시 해제
+ * - seat-report: 지하철 자리 보고 시 해제 (Phase 2)
+ */
+export type UnlockCondition =
+  | { type: "default" }
+  | { type: "first-message" }
+  | { type: "streak-milestone"; days: number }
+  | { type: "seat-report" };
+
 export interface ItemDefinition {
   id: string;
   category: "face" | "hair" | "outfit" | "bag" | "accessory" | "expression";
@@ -60,6 +73,8 @@ export interface ItemDefinition {
   // 시각화용 미리보기 색
   swatch?: string;
   isDefault: boolean;
+  /** 잠금 해제 조건. 없거나 type=default면 처음부터 사용 가능 */
+  unlockBy?: UnlockCondition;
 }
 
 export interface SamplePassenger {

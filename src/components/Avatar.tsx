@@ -72,6 +72,67 @@ export function Avatar({
       {/* 헤어 */}
       <Hair style={avatar.hairStyle} color={avatar.hairColor} />
 
+      {/* 별 뱃지 (30일 출석 보상) — 가슴 */}
+      {has("acc-star-badge") && (
+        <g transform="translate(40 82)">
+          <path
+            d="M0 -7 L2 -2.2 L7 -1.7 L3.2 1.6 L4.3 6.6 L0 4 L-4.3 6.6 L-3.2 1.6 L-7 -1.7 L-2 -2.2 Z"
+            fill="#FFCC44"
+            stroke="#B5862C"
+            strokeWidth="0.8"
+            strokeLinejoin="round"
+          />
+        </g>
+      )}
+
+      {/* 곰돌이 비니 (첫 메시지 보상) — 머리 위 */}
+      {has("acc-bear-hat") && (
+        <g>
+          {/* 귀 */}
+          <ellipse cx="22" cy="14" rx="5.5" ry="5" fill="#C9A47B" />
+          <circle cx="22" cy="14" r="2.5" fill="#A07C53" />
+          <ellipse cx="58" cy="14" rx="5.5" ry="5" fill="#C9A47B" />
+          <circle cx="58" cy="14" r="2.5" fill="#A07C53" />
+          {/* 비니 본체 */}
+          <path
+            d="M16 28 Q16 9 40 9 Q64 9 64 28 L64 30 L16 30 Z"
+            fill="#C9A47B"
+          />
+          {/* 비니 앞쪽 코 */}
+          <ellipse cx="40" cy="28" rx="3.5" ry="2" fill="#A07C53" />
+        </g>
+      )}
+
+      {/* 출근왕 왕관 (7일 보상) — 머리 위 */}
+      {has("acc-crown") && (
+        <g>
+          <path
+            d="M22 14 L28 5 L34 12 L40 3 L46 12 L52 5 L58 14 L58 18 L22 18 Z"
+            fill="#FFD86B"
+            stroke="#D4A85E"
+            strokeWidth="1.2"
+            strokeLinejoin="round"
+          />
+          <circle cx="34" cy="11" r="1.4" fill="#FF5252" />
+          <circle cx="46" cy="11" r="1.4" fill="#3B5BFF" />
+          <circle cx="40" cy="5" r="1.4" fill="#34C759" />
+        </g>
+      )}
+
+      {/* 분홍 리본 (3일 보상) — 머리 옆 */}
+      {has("acc-pink-ribbon") && (
+        <g transform="translate(58 24)">
+          <path
+            d="M-5 -3 L0 0 L5 -3 L5 3 L0 0 L-5 3 Z"
+            fill="#F4A8C4"
+            stroke="#D67BA4"
+            strokeWidth="0.8"
+            strokeLinejoin="round"
+          />
+          <circle cx="0" cy="0" r="1.6" fill="#D67BA4" />
+        </g>
+      )}
+
       {/* 이어폰 (귀 뒤로) */}
       {has("acc-earphones") && (
         <g>

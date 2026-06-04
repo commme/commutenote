@@ -17,6 +17,10 @@ import { useEphemeralMessages } from "../hooks/useEphemeralMessages";
 import { useSampleMessageDemo } from "../hooks/useSampleMessageDemo";
 import { messageStore } from "../services/messageService";
 import { likeMessage } from "../services/reactionService";
+import {
+  getFirstMessageReward,
+  unlockItem,
+} from "../services/unlockService";
 import type { Avatar } from "../types";
 import { COOLDOWN_MS } from "../utils/contentFilter";
 
@@ -65,6 +69,7 @@ export function TrainRoomPage() {
   const [cooldownEndsAt, setCooldownEndsAt] = useState<number>(0);
   const [likedIds, setLikedIds] = useState<Set<string>>(() => new Set());
   const [happyUntil, setHappyUntil] = useState<number>(0);
+  const [unlockToast, setUnlockToast] = useState<string | null>(null);
   const [myX, setMyX] = useState<number>(MY_HOME_X);
   const [myBottom, setMyBottom] = useState<number>(MY_HOME_BOTTOM);
   // 다른 승객들 현재 위치 (slotIndex 0..5) — 주기적으로 슬슬 배회
@@ -105,6 +110,13 @@ export function TrainRoomPage() {
     const t = window.setTimeout(() => setHappyUntil(0), ms);
     return () => window.clearTimeout(t);
   }, [happyUntil, isHappy]);
+
+  // 잠금 해제 토스트 자동 닫힘
+  useEffect(() => {
+    if (!unlockToast) return;
+    const t = window.setTimeout(() => setUnlockToast(null), 5000);
+    return () => window.clearTimeout(t);
+  }, [unlockToast]);
 
   const myAvatar = useMemo<Avatar>(
     () =>
@@ -203,6 +215,11 @@ export function TrainRoomPage() {
       });
       setCooldownEndsAt(Date.now() + COOLDOWN_MS);
       setHappyUntil(Date.now() + HAPPY_DURATION);
+      // 첫 메시지 보상 — 처음 보낼 때만 잠금 해제
+      const reward = getFirstMessageReward();
+      if (reward && unlockItem(reward.id)) {
+        setUnlockToast(`🎁 첫 한마디 보상! 새 아이템 "${reward.name}"`);
+      }
     },
     [
       profile.id,
@@ -228,6 +245,11 @@ export function TrainRoomPage() {
 
   return (
     <div className="app-shell">
+      {unlockToast && (
+        <div className="unlock-toast" role="status" aria-live="polite">
+          {unlockToast}
+        </div>
+      )}
       <div className="app-shell__body">
         <TrainHeader
           line={line}

@@ -7,6 +7,7 @@ import {
   recordAttendance,
   type AttendanceState,
 } from "../services/attendanceService";
+import { getStreakReward, unlockItem } from "../services/unlockService";
 
 /**
  * 출석체크 배지 + 팝업.
@@ -23,11 +24,24 @@ export function AttendanceBadge() {
     const result = recordAttendance();
     setState(result.state);
     if (result.isNewDay) {
-      const msg = result.milestone
-        ? `🎉 ${result.milestone}일 연속 출근 달성!`
-        : `🔥 ${result.state.streak}일 연속 출근 중!`;
+      // 마일스톤 도달 시 해당 보상 아이템 잠금 해제 시도
+      let unlockedName: string | undefined;
+      if (result.milestone) {
+        const reward = getStreakReward(result.milestone);
+        if (reward && unlockItem(reward.id)) {
+          unlockedName = reward.name;
+        }
+      }
+      const msg = unlockedName
+        ? `🎁 ${result.milestone}일 달성! 새 아이템 "${unlockedName}"`
+        : result.milestone
+          ? `🎉 ${result.milestone}일 연속 출근 달성!`
+          : `🔥 ${result.state.streak}일 연속 출근 중!`;
       setToast(msg);
-      const t = window.setTimeout(() => setToast(null), 3200);
+      const t = window.setTimeout(
+        () => setToast(null),
+        unlockedName ? 5000 : 3200,
+      );
       return () => window.clearTimeout(t);
     }
   }, []);

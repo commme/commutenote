@@ -5,6 +5,8 @@ interface SpeechBubbleProps {
   likeCount?: number;
   liked?: boolean;
   onLike?: () => void;
+  /** 분위기용 샘플 메시지인지 — 닉네임 옆 작은 회색 점 표시 */
+  isSample?: boolean;
 }
 
 /**
@@ -17,6 +19,7 @@ export function SpeechBubble({
   likeCount = 0,
   liked = false,
   onLike,
+  isSample = false,
 }: SpeechBubbleProps) {
   return (
     <div
@@ -25,7 +28,18 @@ export function SpeechBubble({
       role="status"
       aria-live="polite"
     >
-      {nickname && <div className="bubble__nick">{nickname}</div>}
+      {nickname && (
+        <div className="bubble__nick">
+          {nickname}
+          {isSample && (
+            <span
+              className="bubble__sample-dot"
+              aria-label="분위기용 샘플 메시지"
+              title="분위기용 샘플 메시지 (내 화면에만 보여요)"
+            />
+          )}
+        </div>
+      )}
       <div className="bubble__body">{content}</div>
       {onLike && (
         <button
